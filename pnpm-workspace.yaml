@@ -2,3 +2,5 @@ allowBuilds:
   esbuild: true
 minimumReleaseAgeExclude:
   - '@envello/schemas@0.1.0'
+overrides:
+  vite: '>=6.4.3'
