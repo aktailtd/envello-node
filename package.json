@@ -27,7 +27,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Aktai-ltd/envello-node.git"
+    "url": "git+https://github.com/Bergblumestudio/envello-node.git"
   },
   "homepage": "https://envello.dev",
   "scripts": {
