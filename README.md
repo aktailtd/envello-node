@@ -121,7 +121,7 @@ try {
 ```ts
 new Envello({
   apiKey: "env_live_...",
-  baseUrl: "http://localhost:3000", // defaults to https://api.envello.dev
+  baseUrl: "http://localhost:3000", // defaults to https://api.envello.dev; https only, except localhost
   timeoutMs: 10_000,                // defaults to 30_000; pass 0 to disable
   fetch: myFetchImpl,               // defaults to the global fetch (Node 22+)
 });
