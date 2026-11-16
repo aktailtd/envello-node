@@ -11,7 +11,8 @@ export interface EnvelloOptions {
    * (apps/api/src/modules/emails/auth.ts). */
   apiKey: string;
   /** Override the API base URL - useful for local dev (`http://localhost:3000`)
-   * or testing against a staging deployment. */
+   * or testing against a staging deployment. Must be https; plain http is
+   * only accepted for localhost, 127.0.0.1 and [::1]. */
   baseUrl?: string;
   /** Injectable fetch implementation, for tests or non-standard runtimes. */
   fetch?: typeof fetch;

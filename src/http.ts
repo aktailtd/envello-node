@@ -1,7 +1,7 @@
 // Thin fetch wrapper shared by every resource. Not exported from the
 // package's public surface (see src/index.ts) - it's an implementation
 // detail of EmailsResource et al.
-import { EnvelloApiError } from "./errors.js";
+import { EnvelloApiError, EnvelloValidationError } from "./errors.js";
 
 export interface HttpClientOptions {
   apiKey: string;
@@ -21,6 +21,31 @@ export interface RequestOptions {
   headers?: Record<string, string>;
 }
 
+const LOOPBACK_HOSTS = ["localhost", "127.0.0.1", "[::1]"];
+
+/**
+ * Every request carries the API key as a bearer token, so a plain-http base
+ * URL would leak it to anyone on the path. Allow https, or http only on a
+ * loopback host for local dev. Same rule as envello-cli's normalizeBaseUrl,
+ * except the path is kept: callers may point at an API behind a path prefix.
+ */
+export function normalizeBaseUrl(raw: string): string {
+  let url: URL;
+  try {
+    url = new URL(raw);
+  } catch {
+    throw new EnvelloValidationError(`Envello: baseUrl is not a valid URL: ${raw}`, []);
+  }
+  const isLoopback = LOOPBACK_HOSTS.includes(url.hostname);
+  if (url.protocol !== "https:" && !(url.protocol === "http:" && isLoopback)) {
+    throw new EnvelloValidationError(
+      "Envello: baseUrl must use https (http is only allowed for localhost, 127.0.0.1 and [::1]).",
+      [],
+    );
+  }
+  return `${url.origin}${url.pathname.replace(/\/+$/, "")}`;
+}
+
 function isPlainErrorBody(value: unknown): value is { error?: unknown; message?: unknown } {
   return typeof value === "object" && value !== null;
 }
@@ -33,7 +58,7 @@ export class HttpClient {
 
   constructor(options: HttpClientOptions) {
     this.apiKey = options.apiKey;
-    this.baseUrl = options.baseUrl.replace(/\/+$/, "");
+    this.baseUrl = normalizeBaseUrl(options.baseUrl);
     this.fetchImpl = options.fetchImpl ?? fetch;
     this.timeoutMs = options.timeoutMs ?? 30_000;
   }
