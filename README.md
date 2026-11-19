@@ -116,6 +116,31 @@ try {
 }
 ```
 
+### Verifying webhooks
+
+Envello signs every webhook delivery with an `Envello-Signature` header (`t=<unix-seconds>,v1=<hex hmac-sha256>`). `verifyWebhook()` checks it against your endpoint's secret (the full `whsec_...` string) and returns `true` or `false`. It never throws on a bad or missing header; it just returns `false`.
+
+**Pass the raw request body**, exactly the bytes Envello sent. If your framework has already parsed the JSON, re-serializing it with `JSON.stringify` will not match the signature. With Express, use `express.raw()` on the webhook route, verify, and only then parse:
+
+```ts
+import express from "express";
+import { verifyWebhook, ENVELLO_SIGNATURE_HEADER } from "envello";
+
+const app = express();
+
+app.post("/webhooks/envello", express.raw({ type: "application/json" }), (req, res) => {
+  const signature = req.get(ENVELLO_SIGNATURE_HEADER);
+  if (!verifyWebhook(process.env.ENVELLO_WEBHOOK_SECRET!, req.body, signature)) {
+    return res.status(400).send("invalid signature");
+  }
+  const event = JSON.parse(req.body.toString("utf8"));
+  // handle event.type ...
+  res.sendStatus(200);
+});
+```
+
+Timestamps more than 300 seconds from your clock are rejected to block replays. Change that with `verifyWebhook(secret, body, header, { toleranceSeconds: 600 })`. During a secret rotation the header carries one `v1` per active secret, and a match on any of them passes, so a receiver on either the old or new secret keeps working.
+
 ### Configuration
 
 ```ts
@@ -129,7 +154,7 @@ new Envello({
 
 ## What's real vs. aspirational
 
-This SDK covers `POST /emails`, `POST /emails/batch`, `GET /emails/:id`, `DELETE /emails/:id`, and `POST /emails/validate`. There is currently no `/v1` prefix on the live routes - `DEFAULT_BASE_URL` in this package points at the unversioned root. `react`/JSX email bodies aren't supported yet - render your React Email template to an HTML string yourself and pass it as `html` for now.
+This SDK covers `POST /emails`, `POST /emails/batch`, `GET /emails/:id`, `DELETE /emails/:id`, and `POST /emails/validate`. It also verifies webhook signatures locally with `verifyWebhook()` (no API call). There is currently no `/v1` prefix on the live routes - `DEFAULT_BASE_URL` in this package points at the unversioned root. `react`/JSX email bodies aren't supported yet - render your React Email template to an HTML string yourself and pass it as `html` for now.
 
 ## Development
 
