@@ -1,6 +1,6 @@
 {
   "name": "envello",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Official Node.js / TypeScript SDK for the Envello transactional email API.",
   "license": "MIT",
   "type": "module",
@@ -37,7 +37,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@envello/schemas": "^0.1.0",
+    "@envello/schemas": "^0.2.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {

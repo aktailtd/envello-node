@@ -12,8 +12,8 @@ importers:
   .:
     dependencies:
       '@envello/schemas':
-        specifier: ^0.1.0
-        version: 0.1.0
+        specifier: ^0.2.0
+        version: 0.2.0
       zod:
         specifier: ^3.23.8
         version: 3.25.76
@@ -39,8 +39,8 @@ packages:
   '@emnapi/wasi-threads@1.2.2':
     resolution: {integrity: sha512-c95qOXkHdydNKhscBTebqEC1CVAZpyqOfVfBzQ1qgzyl3gfeldUjIggDbIZgDKsHLgnsM+igH7TJ/eAasaVuMA==}
 
-  '@envello/schemas@0.1.0':
-    resolution: {integrity: sha512-ZXeozUiXt817mjkHtPMl4We80O6gIWa1eqwzEOxUrmgPdU7m8twodcHq3Aj+WOaqNi2qV+EfOgq3F3Urx8cLVA==}
+  '@envello/schemas@0.2.0':
+    resolution: {integrity: sha512-1406Vi6+xKJr5k4NzeSyrOEq51YmLxQUDZwGHkvvIxemQB78ln+skn9cwZ3uX+YVHMOgEYXyJTELMB24pPicaw==}
     engines: {node: '>=22'}
 
   '@jridgewell/sourcemap-codec@1.5.5':
@@ -519,7 +519,7 @@ snapshots:
       tslib: 2.8.1
     optional: true
 
-  '@envello/schemas@0.1.0':
+  '@envello/schemas@0.2.0':
     dependencies:
       zod: 3.25.76
 
